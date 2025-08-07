@@ -351,13 +351,18 @@ fun SetorHafalanScreen(navController: NavHostController) {
                     }
 
                     isRecording -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth(), // Isi lebar penuh
+                            contentAlignment = Alignment.Center // Tengahkan isinya
+                        ){
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                             modifier = Modifier.padding(16.dp)
                         ) {
                             Image(
-                                painter = painterResource(id = R.drawable.tutup_rekaman),
+                                painter = painterResource(id = R.drawable.sound),
                                 contentDescription = null,
                                 modifier = Modifier.size(40.dp)
                             )
@@ -380,7 +385,7 @@ fun SetorHafalanScreen(navController: NavHostController) {
                                 )
                             }
                         }
-                    }
+                    }}
 
                     isRecordingStopped -> {
                         Row(
