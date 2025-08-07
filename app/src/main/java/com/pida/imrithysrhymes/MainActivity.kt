@@ -58,8 +58,19 @@ fun MainNavigation(username: String, navController: NavHostController) {
         composable("dengarkan_syair") {
             DengarkanSyairScreen(navController = navController)
         }
+        composable("kitab") {
+            BukaKitabScreen(navController = navController)
+        }
+        composable("user") {
+            UserScreen(navController = navController)
+        }
+        composable("setor_hafalan") {
+            SetorHafalanScreen(navController = navController)
+        }
     }
 }
+
+
 
 @Preview(showBackground = true)
 @Composable

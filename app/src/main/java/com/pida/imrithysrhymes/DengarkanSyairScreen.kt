@@ -43,22 +43,89 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-
+import android.media.MediaPlayer
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import com.pida.imrithysrhymes.ui.theme.WinkySansFont
 
 
 @Composable
 fun DengarkanSyairScreen(navController: NavHostController) {
     val playingIndex = remember { mutableStateOf(-1) }
+    val context = LocalContext.current
+    val mediaPlayer = remember { mutableStateOf<MediaPlayer?>(null) }
+    val expandedIndex = remember { mutableStateOf(-1) } // buat buka-tutup kolom
+    val isAudioPlaying = remember { mutableStateOf(false) } // buat toggle play/stop
+    val isPlayingAll = remember { mutableStateOf(false) }
+    val isShuffle = remember { mutableStateOf(false) }
+
+
 
     val daftarBab = listOf(
-        "Pembukaan – المقدمة",
-        "Bab Kalam – باب الكلام",
-        "Bab I’rob – باب الإعراب",
-        "Bab Alamat I’rob – بَابُ عَلَامَاتِ الإِعْرَابِ",
-        "Bab Alamat Nashob – بَابُ عَلَامَاتِ النَّصْبِ",
-        "Bab Alamat Jer – بَابُ عَلَامَاتِ الخَفْضِ",
-        "Bab tanda-tanda Jazam – بَابُ عَلَامَاتِ الجَزْمِ"
+        "Pembukaan – المقدمة" to R.raw.jajal1,
+        "Bab Kalam – باب الكلام" to R.raw.jajal2,
+        "Bab I’rob – باب الإعراب" to null,
+        "Bab Alamat I’rob – بَابُ عَلَامَاتِ الإِعْرَابِ" to null,
+        "Bab Alamat Nashob – بَابُ عَلَامَاتِ النَّصْبِ" to null,
+        "Bab Alamat Jer – بَابُ عَلَامَاتِ الخَفْضِ" to null,
+        "Bab tanda-tanda Jazam – بَابُ عَلَامَاتِ الجَزْمِ" to null,
+        "Fasal – فَصْلٌ" to null,
+        "Bab Makrifat dan Nakirah – بَابُ المَعْرِفَةِ وَالنَّكِرةِ" to null,
+        "Bab Fiil-fiil – بَابُ الأَفْعَالِ" to null,
+        "Bab I’rab Fiil – بَابُ إِعْرَابِ الْفِعْلِ" to null,
+        "Bab isim-isim yang dibaca Rafa – بَابُ مَرْفَوعَاتِ الأَسْمَاءِ" to null,
+        "Bab Naibul Fail – بَابُ نَائِبِ الْفَاعِلِ" to null,
+        "Bab Mubtada dan Khobar – بَابُ المُبْتَدَإ وَالْخَبَر" to null,
+        "Kana dan Saudar-saudaranya – كان وأخواتها" to null,
+        "Inna dan saudara-saudaranya – إن وأخواتها" to null,
+        "Dzanna dan saudara-saudaranya – ظن وأخواتها" to null,
+        "Bab Na'at – بَابُ النَّعْتِ" to null,
+        "Bab Ataf – بَابُ الْعَطْفِ" to null,
+        "Bab Taukid – بَابُ التَّوكِيدِ" to null,
+        "Bab Badal – بَابُ الْبَدَلِ" to null,
+        "Bab isim-isim yang dibaca nashob – بَابُ مَنْصُوبَاتِ الأَسْمَاءِ" to null,
+        "Bab Masdar – بَابُ المَصْدَرِ" to null,
+        "Bab Dhorof – بَاب الظَرْفِ" to null,
+        "Bab Hal – بَابُ الحَالِ" to null,
+        "Bab Tamyiz – بَابُ التَّمْيِيزِ" to null,
+        "Bab Istisna – بَابُ الاُسْتِثْنَاءِ" to null,
+        "Bab la  yang beramal seperti amal inna – بَابُ لاَ الْعَامِلَةِ عَمَلَ إِنَّ" to null,
+        "Bab Munada – بَابُ النِّدَاءِ" to null,
+        "Bab Maful Li ajlih – بَابُ المَفْعُولِ لأَجْلِهِ" to null,
+        "Bab Maful Maah – بَابُ المَفْعُولِ مَعَهُ" to null,
+        "Bab isim-isim yang dibaca jer – بَابُ مَخْفوضَاتِ الأَسْمَاءِ" to null,
+        "Bab Idofah – بَابُ الإِضَافَةِ" to null
+
+
+
     )
+    fun playAllAudios(list: List<Pair<String, Int>>, index: Int = 0) {
+        if (index >= list.size) {
+            // Selesai putar semua
+            isPlayingAll.value = false
+            playingIndex.value = -1
+            mediaPlayer.value?.release()
+            mediaPlayer.value = null
+            return
+        }
+
+        val resId = list[index].second
+        val player = MediaPlayer.create(context, resId)
+
+        mediaPlayer.value?.stop()
+        mediaPlayer.value?.release()
+        mediaPlayer.value = player
+
+        playingIndex.value = daftarBab.indexOfFirst { it.second == resId }
+
+        player.setOnCompletionListener {
+            mediaPlayer.value = null
+            playAllAudios(list, index + 1)
+        }
+
+
+        player.start()
+    }
 
     Column(
         modifier = Modifier
@@ -89,6 +156,7 @@ fun DengarkanSyairScreen(navController: NavHostController) {
                     Text(
                         text = "Dengarkan Syair",
                         fontSize = 35.sp,
+                        fontFamily = WinkySansFont,
                         fontWeight = FontWeight.ExtraBold,
                         color = Color(0xFF3A327C)
                     )}
@@ -129,17 +197,53 @@ fun DengarkanSyairScreen(navController: NavHostController) {
         ) {
             RoundedImageButton(
                 text = "Putar Semua",
-                imageRes = R.drawable.putarsemua,
-                onClick = { /* aksi */ },
+                imageRes = if (isPlayingAll.value && !isShuffle.value) R.drawable.play else R.drawable.putarsemua,
+                onClick = {
+                    if (isPlayingAll.value && !isShuffle.value) {
+                        // Stop
+                        mediaPlayer.value?.stop()
+                        mediaPlayer.value?.release()
+                        mediaPlayer.value = null
+                        playingIndex.value = -1
+                        isPlayingAll.value = false
+                    } else {
+                        // Play semua urut
+                        val orderedList = daftarBab.filter { it.second != null }
+                            .map { Pair(it.first, it.second!!) }
+                        isShuffle.value = false
+                        isPlayingAll.value = true
+                        playAllAudios(orderedList)
+                    }
+                },
                 modifier = Modifier.weight(1f)
             )
+
             Spacer(modifier = Modifier.width(16.dp))
+
             RoundedImageButton(
                 text = "Putar Acak",
-                imageRes = R.drawable.acak,
-                onClick = { /* aksi */ },
+                imageRes = if (isPlayingAll.value && isShuffle.value) R.drawable.play else R.drawable.acak,
+                onClick = {
+                    if (isPlayingAll.value && isShuffle.value) {
+                        // Stop
+                        mediaPlayer.value?.stop()
+                        mediaPlayer.value?.release()
+                        mediaPlayer.value = null
+                        playingIndex.value = -1
+                        isPlayingAll.value = false
+                    } else {
+                        // Play semua acak
+                        val shuffledList = daftarBab.filter { it.second != null }
+                            .map { Pair(it.first, it.second!!) }
+                            .shuffled()
+                        isShuffle.value = true
+                        isPlayingAll.value = true
+                        playAllAudios(shuffledList)
+                    }
+                },
                 modifier = Modifier.weight(1f)
             )
+
         }
 
 //        Spacer(modifier = Modifier.height(-10.dp))
@@ -153,13 +257,54 @@ fun DengarkanSyairScreen(navController: NavHostController) {
 
         ) {
             itemsIndexed(daftarBab) { index, item ->
+                val isThisExpanded = expandedIndex.value == index
+                val isThisPlaying = playingIndex.value == index
+                val audioRes = item.second
+
                 BabButton(
-                    text = item,
-                    isPlaying = playingIndex.value == index,
-                    onClick = { playingIndex.value = index }
+                    text = item.first,
+                    isExpanded = isThisExpanded,
+                    isAudioPlaying = isThisPlaying,
+                    onMainClick = {
+                        // klik pertama: buka/tutup tombol
+                        if (isThisExpanded) {
+                            expandedIndex.value = -1
+                        } else {
+                            expandedIndex.value = index
+                            // reset audio state
+                            playingIndex.value = -1
+                            mediaPlayer.value?.stop()
+                            mediaPlayer.value?.release()
+                            mediaPlayer.value = null
+                        }
+                    },
+                    onIconClick = {
+                        if (isThisPlaying) {
+                            // sedang main -> stop
+                            mediaPlayer.value?.pause()
+                            mediaPlayer.value?.seekTo(0)
+                            mediaPlayer.value?.release()
+                            mediaPlayer.value = null
+                            playingIndex.value = -1
+                        } else {
+                            audioRes?.let {
+                                mediaPlayer.value?.stop()
+                                mediaPlayer.value?.release()
+                                val player = MediaPlayer.create(context, it)
+                                player.setOnCompletionListener {
+                                    playingIndex.value = -1
+                                    mediaPlayer.value = null
+                                }
+                                player.start()
+                                mediaPlayer.value = player
+                                playingIndex.value = index
+                            }
+                        }
+                    }
                 )
                 Spacer(modifier = Modifier.height(12.dp))
             }
+
         }
 
         // 🔹 BOTTOM NAV
@@ -178,7 +323,7 @@ fun RoundedImageButton(
         onClick = onClick,
         shape = RoundedCornerShape(24.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color(0xFFEDE9FB)
+            containerColor = Color(0xFFDCDAFB)
         ),
         modifier = modifier
             .height(155.dp)
@@ -197,6 +342,7 @@ fun RoundedImageButton(
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             text,
+            fontFamily = WinkySansFont,
             fontWeight = FontWeight.Bold,
             fontSize = 21.sp,
             color = Color(0xFF3A327C)
@@ -206,32 +352,43 @@ fun RoundedImageButton(
 
 
 @Composable
-fun BabButton(text: String, isPlaying: Boolean, onClick: () -> Unit) {
+fun BabButton(
+    text: String,
+    isExpanded: Boolean,
+    isAudioPlaying: Boolean,
+    onMainClick: () -> Unit,
+    onIconClick: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(24.dp))
             .background(Color(0xFFDCDAFB))
-            .clickable { onClick() }
-            .padding(vertical = 12.dp, horizontal = 16.dp),
+            .clickable { onMainClick() }
+            .padding(vertical = 12.dp, horizontal = 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = text,
             fontSize = 20.sp,
+            fontFamily = WinkySansFont,
             fontWeight = FontWeight.SemiBold,
             color = Color(0xFF3A327C),
             textAlign = TextAlign.Center
         )
-        if (isPlaying) {
-            Spacer(modifier = Modifier.height(8.dp))
+
+        if (isExpanded) {
+            Spacer(modifier = Modifier.height(6.dp))
             Icon(
-                painter = painterResource(id = R.drawable.play),
-                contentDescription = "Play",
+                painter = painterResource(
+                    id = if (isAudioPlaying) R.drawable.play else R.drawable.stop
+                ),
+                contentDescription = if (isAudioPlaying) "Pause" else "Play",
                 modifier = Modifier
-                    .size(36.dp)
+                    .size(40.dp)
                     .background(Color.White, shape = CircleShape)
-                    .padding(6.dp),
+                    .padding(6.dp)
+                    .clickable { onIconClick() },
                 tint = Color(0xFF3A327C)
             )
         }

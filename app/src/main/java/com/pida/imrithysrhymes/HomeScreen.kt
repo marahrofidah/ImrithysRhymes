@@ -1,6 +1,7 @@
 package com.pida.imrithysrhymes
 
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -57,7 +58,7 @@ import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.TextStyle
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-
+import kotlin.system.exitProcess
 
 
 data class MenuItem(val title: String, val iconRes: Int, val backgroundColor: Color)
@@ -318,12 +319,22 @@ fun MenuTile(item: MenuItem, navController: NavHostController) {
         modifier = Modifier
             .height(164.dp)
             .fillMaxWidth()
-            .clickable {
-                if (item.title == "Dengarkan Syair") {
-                    navController.navigate("dengarkan_syair")
+                .clickable {
+                    when (item.title) {
+                        "Dengarkan Syair" -> navController.navigate("dengarkan_syair")
+                        "Setor Hafalan" -> navController.navigate("setor_hafalan")
+                        "Main Quiz" -> {
+                            // TODO: Tambahkan screen-nya kalau udah ada
+                            Log.d("NAV", "Main Quiz belum diimplementasi")
+                        }
+
+                        "Buka Kitab" -> navController.navigate("kitab")
+                        else -> {
+                            Log.e("NAV", "Menu tidak dikenali: ${item.title}")
+                        }
+                    }
                 }
-            }
-    ) {
+                ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
@@ -382,7 +393,14 @@ fun BottomNavigationBar(navController: NavHostController) {
                 val selected = selectedIndex.value == index
                 NavigationBarItem(
                     selected = selected,
-                    onClick = { selectedIndex.value = index },
+                    onClick = { selectedIndex.value = index
+                        when (items[index]) {
+                            "home" -> navController.navigate("home")
+                            "book" -> navController.navigate("kitab")
+                            "person" -> navController.navigate("user")
+                            "exit" -> exitProcess(0)
+                        }
+                    },
                     icon = {
                         Box(
                             contentAlignment = Alignment.Center,
