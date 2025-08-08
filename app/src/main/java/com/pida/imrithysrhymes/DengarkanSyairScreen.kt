@@ -45,6 +45,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import android.media.MediaPlayer
 import androidx.compose.runtime.remember
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.platform.LocalContext
 import com.pida.imrithysrhymes.ui.theme.WinkySansFont
 
@@ -328,6 +332,30 @@ fun RoundedImageButton(
         modifier = modifier
             .height(155.dp)
             .padding(2.dp)
+            .drawBehind {
+                val shadowColorLight = Color.White.copy(alpha = 0.3f)
+                val shadowColorDark = Color.Black.copy(alpha = 0.3f)
+                val cornerRadius = 20.dp.toPx()
+                val blurRadius = 10.dp.toPx()
+
+                // Shadow terang (atas kiri)
+                drawRoundRect(
+                    color = shadowColorLight,
+                    topLeft = Offset(-10f, -10f),
+                    size = size,
+                    cornerRadius = CornerRadius(cornerRadius, cornerRadius),
+                    blendMode = BlendMode.SrcOver
+                )
+
+                // Shadow gelap (bawah kanan)
+                drawRoundRect(
+                    color = shadowColorDark,
+                    topLeft = Offset(6f, 6f),
+                    size = size,
+                    cornerRadius = CornerRadius(cornerRadius, cornerRadius),
+                    blendMode = BlendMode.SrcOver
+                )
+            }
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

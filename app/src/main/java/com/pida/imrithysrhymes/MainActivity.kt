@@ -67,6 +67,24 @@ fun MainNavigation(username: String, navController: NavHostController) {
         composable("setor_hafalan") {
             SetorHafalanScreen(navController = navController)
         }
+        composable("main_quiz") {
+            val quiz = remember { QuizRepository.getTodayQuiz() }
+            val streak = quiz.streak // atau kamu bisa pakai state management lain nanti
+
+            QuizScreen(
+                quiz = quiz,
+                streak = streak,
+                navController = navController,
+                onAnswerSelected = { isCorrect ->
+                    // TODO: logika setelah jawab
+                },
+                onRetry = {
+                    // TODO: logika jika user retry
+                }
+            )
+        }
+
+
     }
 }
 

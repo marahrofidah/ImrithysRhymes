@@ -1,5 +1,10 @@
 package com.pida.imrithysrhymes
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -16,12 +21,15 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -46,6 +54,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -55,8 +64,11 @@ import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import com.pida.imrithysrhymes.ui.theme.WinkySansFont
+import androidx.compose.runtime.LaunchedEffect
+
 
 @Composable
 fun SetorHafalanScreen(navController: NavHostController) {
@@ -64,13 +76,63 @@ fun SetorHafalanScreen(navController: NavHostController) {
     var isRecording by remember { mutableStateOf(false) }
     var isRecordingStopped by remember { mutableStateOf(false) }
     var isPlaying by remember { mutableStateOf(false) }
+    var isPaused by remember { mutableStateOf(false) }
     var showPopup by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val recorder = remember { AudioRecorder(context) }
+    var audioFilePath by remember { mutableStateOf("") }
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            if (!isGranted) {
+                Toast.makeText(context, "Izin diperlukan untuk merekam audio", Toast.LENGTH_SHORT).show()
+            }
+        }
+    )
+
+    LaunchedEffect(Unit) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+        }
+    }
 
     val babList = listOf(
         "Pembukaan – المقدمة",
         "Bab Kalam – باب الكلام",
-        "Bab I’rob – باب الإعراب"
+        "Bab I’rob – باب الإعراب",
+        "Bab Alamat I’rob – بَابُ عَلَامَاتِ الإِعْرَابِ",
+        "Bab Alamat Nashob – بَابُ عَلَامَاتِ النَّصْبِ",
+        "Bab Alamat Jer – بَابُ عَلَامَاتِ الخَفْضِ",
+        "Bab tanda-tanda Jazam – بَابُ عَلَامَاتِ الجَزْمِ",
+        "Fasal – فَصْلٌ",
+        "Bab Makrifat dan Nakirah – بَابُ المَعْرِفَةِ وَالنَّكِرةِ",
+        "Bab Fiil-fiil – بَابُ الأَفْعَالِ",
+        "Bab I’rab Fiil – بَابُ إِعْرَابِ الْفِعْلِ",
+        "Bab isim-isim yang dibaca Rafa – بَابُ مَرْفَوعَاتِ الأَسْمَاءِ",
+        "Bab Naibul Fail – بَابُ نَائِبِ الْفَاعِلِ",
+        "Bab Mubtada dan Khobar – بَابُ المُبْتَدَإ وَالْخَبَر",
+        "Kana dan Saudar-saudaranya – كان وأخواتها",
+        "Inna dan saudara-saudaranya – إن وأخواتها",
+        "Dzanna dan saudara-saudaranya – ظن وأخواتها",
+        "Bab Na'at – بَابُ النَّعْتِ",
+        "Bab Ataf – بَابُ الْعَطْفِ",
+        "Bab Taukid – بَابُ التَّوكِيدِ",
+        "Bab Badal – بَابُ الْبَدَلِ",
+        "Bab isim-isim yang dibaca nashob – بَابُ مَنْصُوبَاتِ الأَسْمَاءِ",
+        "Bab Masdar – بَابُ المَصْدَرِ",
+        "Bab Dhorof – بَاب الظَرْفِ",
+        "Bab Hal – بَابُ الحَالِ",
+        "Bab Tamyiz – بَابُ التَّمْيِيزِ",
+        "Bab Istisna – بَابُ الاُسْتِثْنَاءِ",
+        "Bab la  yang beramal seperti amal inna – بَابُ لاَ الْعَامِلَةِ عَمَلَ إِنَّ",
+        "Bab Munada – بَابُ النِّدَاءِ",
+        "Bab Maful Li ajlih – بَابُ المَفْعُولِ لأَجْلِهِ",
+        "Bab Maful Maah – بَابُ المَفْعُولِ مَعَهُ",
+        "Bab isim-isim yang dibaca jer – بَابُ مَخْفوضَاتِ الأَسْمَاءِ",
+        "Bab Idofah – بَابُ الإِضَافَةِ"
     )
 
     Scaffold(
@@ -114,6 +176,15 @@ fun SetorHafalanScreen(navController: NavHostController) {
                             .offset(y = (-30).dp, x = (-20).dp)
                             .size(width = 129.dp, height = 150.dp)
                     )
+                    Image(
+                        painter = painterResource(id = R.drawable.person1),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .offset(x = -90.dp, y = 25.dp)
+                            .size(width = 70.dp, height = 70.dp)
+
+                    )
                 }
             }
 
@@ -121,7 +192,7 @@ fun SetorHafalanScreen(navController: NavHostController) {
 // Gambar Orang + Teks
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth().offset(y = -70.dp)
+                modifier = Modifier.fillMaxWidth().offset(y = -60.dp)
             ) {
                 // Gambar orang besar
                 Image(
@@ -154,7 +225,7 @@ fun SetorHafalanScreen(navController: NavHostController) {
                     .drawBehind {
                         val shadowColorLight = Color.White.copy(alpha = 0.3f)
                         val shadowColorDark = Color.Black.copy(alpha = 0.3f)
-                        val cornerRadius = 16.dp.toPx()
+                        val cornerRadius = 50.dp.toPx()
                         val blurRadius = 10.dp.toPx()
 
                         // Shadow terang (atas kiri)
@@ -175,7 +246,7 @@ fun SetorHafalanScreen(navController: NavHostController) {
                             blendMode = BlendMode.SrcOver
                         )
                     },
-                shape = RoundedCornerShape(20.dp),
+                shape = RoundedCornerShape(50.dp),
                 colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF5E0)) // warna latar card
             ) {
                 Column(
@@ -201,7 +272,7 @@ fun SetorHafalanScreen(navController: NavHostController) {
                             .drawBehind {
                                 val shadowColorLight = Color.White.copy(alpha = 0.3f)
                                 val shadowColorDark = Color.Black.copy(alpha = 0.3f)
-                                val cornerRadius = 16.dp.toPx()
+                                val cornerRadius = 40.dp.toPx()
                                 val blurRadius = 10.dp.toPx()
 
                                 // Shadow terang (atas kiri)
@@ -222,7 +293,7 @@ fun SetorHafalanScreen(navController: NavHostController) {
                                     blendMode = BlendMode.SrcOver
                                 )
                             }, // jarak atas
-                        shape = RoundedCornerShape(12.dp),
+                        shape = RoundedCornerShape(50.dp),
                         border = BorderStroke(1.dp, Color.LightGray),
                         colors = CardDefaults.cardColors(containerColor = Color.White)
                     ) {
@@ -250,16 +321,21 @@ fun SetorHafalanScreen(navController: NavHostController) {
                                 expanded = expanded,
                                 onDismissRequest = { expanded = false },
                                 offset = DpOffset(x = -16.dp, y = 0.dp), // ⬅️ biar sejajar, ga ke kanan
+                                shape = RoundedCornerShape(20.dp),
                                 modifier = Modifier
                                     .width(with(LocalDensity.current) { dropdownWidth.toDp() })
-                                    .background(Color.White)
+                                    .background(Color(0xFFFFF5E0))
+                                    .heightIn(max = 300.dp)
                             ) {
                                 babList.forEach { bab ->
                                     DropdownMenuItem(
+                                        modifier = Modifier.padding(vertical = 4.dp),
                                         text = {
                                             Box(
-                                                modifier = Modifier.fillMaxWidth(),
-                                                contentAlignment = Alignment.Center
+                                                modifier = Modifier.fillMaxWidth()
+                                                    .background(Color.White, shape = RoundedCornerShape(10.dp))
+                                                    .padding(4.dp),
+                                                contentAlignment = Alignment.Center,
                                             )  {
                                                 Text(
                                                     text = bab,
@@ -293,7 +369,7 @@ fun SetorHafalanScreen(navController: NavHostController) {
                     .drawBehind {
                         val shadowColorLight = Color.White.copy(alpha = 0.3f)
                         val shadowColorDark = Color.Black.copy(alpha = 0.3f)
-                        val cornerRadius = 16.dp.toPx()
+                        val cornerRadius = 50.dp.toPx()
                         val blurRadius = 10.dp.toPx()
 
                         // Shadow terang (atas kiri)
@@ -314,7 +390,7 @@ fun SetorHafalanScreen(navController: NavHostController) {
                             blendMode = BlendMode.SrcOver
                         )
                     },
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(50.dp),
                 colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF5E0)),
                 elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
             ) {
@@ -326,15 +402,17 @@ fun SetorHafalanScreen(navController: NavHostController) {
                                 .padding(16.dp)
                         ) {
                             IconButton(
-                                onClick = { isRecording = true },
+                                onClick = {
+                                    audioFilePath = recorder.startRecording()
+                                    isRecording = true
+                                },
                                 modifier = Modifier
                                     .size(100.dp)
-                                    .background(Color(0xFFECECEC), shape = CircleShape)
+                                    .background(Color.White, shape = CircleShape)
                             ) {
-                                Icon(
+                                Image(
                                     painter = painterResource(id = R.drawable.mic),
                                     contentDescription = "Mulai Rekam",
-                                    tint = Color(0xFF8B5E3C),
                                     modifier = Modifier.size(80.dp)
                                 )
                             }
@@ -342,7 +420,7 @@ fun SetorHafalanScreen(navController: NavHostController) {
                             Spacer(modifier = Modifier.width(8.dp))
 
                             Text(
-                                "Tekan untuk mulai merekam",
+                                "Tekan mic untuk mulai merekam",
                                 fontSize = 24.sp,
                                 fontFamily = WinkySansFont,
                                 color = Color(0xFF3A327C)
@@ -351,32 +429,35 @@ fun SetorHafalanScreen(navController: NavHostController) {
                     }
 
                     isRecording -> {
-                        Box(
+                        Column(
                             modifier = Modifier
-                                .fillMaxWidth(), // Isi lebar penuh
-                            contentAlignment = Alignment.Center // Tengahkan isinya
-                        ){
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            modifier = Modifier.padding(16.dp)
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
+                            // Gambar/tampilan status rekaman
                             Image(
-                                painter = painterResource(id = R.drawable.sound),
+                                painter = painterResource(id = R.drawable.tutup_rekaman), // ganti sesuai gambar
                                 contentDescription = null,
-                                modifier = Modifier.size(40.dp)
+                                modifier = Modifier.size(100.dp)
                             )
-                            IconButton(onClick = { isPlaying = !isPlaying }) {
-                                Image(
-                                    painter = painterResource(id = if (isPlaying) R.drawable.stop else R.drawable.play),
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            // Tombol play (tidak bisa ditekan)
+                            IconButton(onClick = { /* kosong, tidak aktif saat rekaman */ }, enabled = false) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.play),
                                     contentDescription = null,
                                     modifier = Modifier.size(40.dp)
                                 )
                             }
+
+                            // Tombol tutup rekaman = berhenti & simpan
                             IconButton(onClick = {
+                                recorder.stopRecording()
                                 isRecording = false
                                 isRecordingStopped = true
-                                isPlaying = false
                             }) {
                                 Image(
                                     painter = painterResource(id = R.drawable.tutup_rekaman),
@@ -385,7 +466,8 @@ fun SetorHafalanScreen(navController: NavHostController) {
                                 )
                             }
                         }
-                    }}
+                    }
+
 
                     isRecordingStopped -> {
                         Row(
@@ -408,7 +490,6 @@ fun SetorHafalanScreen(navController: NavHostController) {
             }
 
 
-            Spacer(modifier = Modifier.height(40.dp))
 
                         // Tombol Kirim Hafalan
                         Button(
@@ -417,15 +498,17 @@ fun SetorHafalanScreen(navController: NavHostController) {
                                 isRecording = false
                                 isRecordingStopped = false
                                 isPlaying = false
+                                recorder.stopPlaying()
                             },
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8B5E3C)),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6E502F)),
                             modifier = Modifier
+                                .offset(y = 100.dp)
                                 .fillMaxWidth()
                                 .height(56.dp)
                                 .drawBehind {
                                     val shadowColorLight = Color.White.copy(alpha = 0.3f)
                                     val shadowColorDark = Color.Black.copy(alpha = 0.3f)
-                                    val cornerRadius = 16.dp.toPx()
+                                    val cornerRadius = 25.dp.toPx()
                                     val blurRadius = 10.dp.toPx()
 
                                     // Shadow terang (atas kiri)
@@ -446,12 +529,11 @@ fun SetorHafalanScreen(navController: NavHostController) {
                                         blendMode = BlendMode.SrcOver
                                     )
                                 },
-                            shape = RoundedCornerShape(16.dp)
+                            shape = RoundedCornerShape(30.dp)
                         ) {
-                            Icon(
+                            Image(
                                 painter = painterResource(id = R.drawable.pesawat_kertas),
                                 contentDescription = null,
-                                tint = Color.White,
                                 modifier = Modifier.size(36.dp)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
@@ -467,10 +549,64 @@ fun SetorHafalanScreen(navController: NavHostController) {
                         // Popup Berhasil
                         if (showPopup) {
                             AlertDialog(
+                                containerColor = Color(0xFFFFF2DF),
+                                modifier = Modifier
+                                    .drawBehind {
+                                    val shadowColorLight = Color.White.copy(alpha = 0.3f)
+                                    val shadowColorDark = Color.Black.copy(alpha = 0.3f)
+                                    val cornerRadius = 20.dp.toPx()
+                                    val blurRadius = 10.dp.toPx()
+
+                                    // Shadow terang (atas kiri)
+                                    drawRoundRect(
+                                        color = shadowColorLight,
+                                        topLeft = Offset(-10f, -10f),
+                                        size = size,
+                                        cornerRadius = CornerRadius(cornerRadius, cornerRadius),
+                                        blendMode = BlendMode.SrcOver
+                                    )
+
+                                    // Shadow gelap (bawah kanan)
+                                    drawRoundRect(
+                                        color = shadowColorDark,
+                                        topLeft = Offset(6f, 6f),
+                                        size = size,
+                                        cornerRadius = CornerRadius(cornerRadius, cornerRadius),
+                                        blendMode = BlendMode.SrcOver
+                                    )
+                                },
                                 onDismissRequest = { showPopup = false },
                                 confirmButton = {
-                                    Button(onClick = { showPopup = false }) {
-                                        Text("Oke")
+                                    Button(onClick = { showPopup = false },
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = Color(0xFF6E502F)),
+                                        modifier = Modifier
+                                        .drawBehind {
+                                            val shadowColorLight = Color.White.copy(alpha = 0.3f)
+                                            val shadowColorDark = Color.Black.copy(alpha = 0.3f)
+                                            val cornerRadius = 20.dp.toPx()
+                                            val blurRadius = 10.dp.toPx()
+
+                                            // Shadow terang (atas kiri)
+                                            drawRoundRect(
+                                                color = shadowColorLight,
+                                                topLeft = Offset(-5f, -5f),
+                                                size = size,
+                                                cornerRadius = CornerRadius(cornerRadius, cornerRadius),
+                                                blendMode = BlendMode.SrcOver
+                                            )
+
+                                            // Shadow gelap (bawah kanan)
+                                            drawRoundRect(
+                                                color = shadowColorDark,
+                                                topLeft = Offset(4f, 4f),
+                                                size = size,
+                                                cornerRadius = CornerRadius(cornerRadius, cornerRadius),
+                                                blendMode = BlendMode.SrcOver
+                                            )
+                                        }) {
+                                        Text("Oke",  fontSize = 22.sp,
+                                            fontFamily = WinkySansFont)
                                     }
                                 },
                                 icon = {
@@ -479,8 +615,10 @@ fun SetorHafalanScreen(navController: NavHostController) {
                                         contentDescription = null
                                     )
                                 },
-                                title = { Text("Yeayy!!") },
-                                text = { Text("Hafalan berhasil dikirim!!") }
+                                title = { Text("Yeayy!!", fontSize = 30.sp,
+                                    fontFamily = WinkySansFont, ) },
+                                text = { Text("Hafalan berhasil dikirim!!", fontSize = 22.sp,
+                                    fontFamily = WinkySansFont) }
                             )
                         }
                     }

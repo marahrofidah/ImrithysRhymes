@@ -65,7 +65,7 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("io.coil-kt:coil-gif:2.5.0")
-    implementation ("com.google.accompanist:accompanist-glide:0.33.1")
+//    implementation ("com.google.accompanist:accompanist-glide:0.33.1")
     implementation ("androidx.compose.ui:ui:1.5.4")
 
 

@@ -52,8 +52,11 @@ import androidx.compose.material.icons.filled.LibraryBooks
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.TextStyle
 import androidx.navigation.NavController
@@ -259,7 +262,7 @@ fun HomeScreen(username: String, navController: NavHostController) {
                     Spacer(modifier = Modifier.height(12.dp))
 
                     LinearProgressIndicator(
-                        progress = { 50f / 254f },
+                        progress = { 0f / 254f },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(20.dp)
@@ -269,7 +272,7 @@ fun HomeScreen(username: String, navController: NavHostController) {
                     )
 
                     Text(
-                        text = "50/254",
+                        text = "0/254",
                         fontSize = 12.sp,
                         color = Color.DarkGray,
                         modifier = Modifier.align(Alignment.End)
@@ -315,18 +318,38 @@ fun MenuTile(item: MenuItem, navController: NavHostController) {
     Card(
         shape = RoundedCornerShape(40.dp),
         colors = CardDefaults.cardColors(containerColor = item.backgroundColor),
-        elevation = CardDefaults.cardElevation(defaultElevation = 12.dp),
         modifier = Modifier
             .height(164.dp)
+            .drawBehind {
+                val shadowColorLight = Color.White.copy(alpha = 0.3f)
+                val shadowColorDark = Color.Black.copy(alpha = 0.3f)
+                val cornerRadius = 40.dp.toPx()
+                val blurRadius = 10.dp.toPx()
+
+                // Shadow terang (atas kiri)
+                drawRoundRect(
+                    color = shadowColorLight,
+                    topLeft = Offset(-10f, -10f),
+                    size = size,
+                    cornerRadius = CornerRadius(cornerRadius, cornerRadius),
+                    blendMode = BlendMode.SrcOver
+                )
+
+                // Shadow gelap (bawah kanan)
+                drawRoundRect(
+                    color = shadowColorDark,
+                    topLeft = Offset(6f, 6f),
+                    size = size,
+                    cornerRadius = CornerRadius(cornerRadius, cornerRadius),
+                    blendMode = BlendMode.SrcOver
+                )
+            }
             .fillMaxWidth()
                 .clickable {
                     when (item.title) {
                         "Dengarkan Syair" -> navController.navigate("dengarkan_syair")
                         "Setor Hafalan" -> navController.navigate("setor_hafalan")
-                        "Main Quiz" -> {
-                            // TODO: Tambahkan screen-nya kalau udah ada
-                            Log.d("NAV", "Main Quiz belum diimplementasi")
-                        }
+                        "Main Quiz" -> navController.navigate("main_quiz")
 
                         "Buka Kitab" -> navController.navigate("kitab")
                         else -> {
