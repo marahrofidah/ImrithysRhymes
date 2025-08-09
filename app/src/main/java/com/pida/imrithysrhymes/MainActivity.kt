@@ -16,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.pida.imrithysrhymes.ui.theme.ImrithysRhymesTheme
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -32,28 +33,34 @@ class MainActivity : ComponentActivity() {
                 var username by remember { mutableStateOf("") }
                 val navController = rememberNavController()
 
+                // ✅ ViewModel untuk progress quiz
+                val quizViewModel: QuizViewModel = viewModel()
+
                 if (!splashFinished) {
                     AnimatedSplashScreen { inputName ->
                         username = inputName
                         splashFinished = true
                     }
                 } else {
-                    MainNavigation(username, navController)
+                    MainNavigation(username, navController, quizViewModel)
                 }
-
             }
         }
     }
 }
 
 @Composable
-fun MainNavigation(username: String, navController: NavHostController) {
+fun MainNavigation(
+    username: String,
+    navController: NavHostController,
+    quizViewModel: QuizViewModel
+) {
     NavHost(
         navController = navController,
         startDestination = "home"
     ) {
         composable("home") {
-            HomeScreen(username = username, navController = navController)
+            HomeScreen(username = username, navController = navController, quizViewModel = quizViewModel)
         }
         composable("dengarkan_syair") {
             DengarkanSyairScreen(navController = navController)
@@ -69,22 +76,21 @@ fun MainNavigation(username: String, navController: NavHostController) {
         }
         composable("main_quiz") {
             val quiz = remember { QuizRepository.getTodayQuiz() }
-            val streak = quiz.streak // atau kamu bisa pakai state management lain nanti
+            val streak = quiz.streak
 
             QuizScreen(
                 quiz = quiz,
                 streak = streak,
                 navController = navController,
+                quizViewModel = quizViewModel, // ✅ kirim ViewModel
                 onAnswerSelected = { isCorrect ->
-                    // TODO: logika setelah jawab
+                    if (isCorrect) {
+                        quizViewModel.incrementProgress() // ✅ update progress
+                    }
                 },
-                onRetry = {
-                    // TODO: logika jika user retry
-                }
+                onRetry = {}
             )
         }
-
-
     }
 }
 
@@ -94,5 +100,11 @@ fun MainNavigation(username: String, navController: NavHostController) {
 @Composable
 fun HomeScreenPreview() {
     val navController = rememberNavController()
-    HomeScreen(username = "pidaa", navController = navController)
+    val quizViewModel: QuizViewModel = viewModel() // ✅ Tambah ini
+
+    HomeScreen(
+        username = "pidaa",
+        navController = navController,
+        quizViewModel = quizViewModel // ✅ Kirim ke parameter
+    )
 }

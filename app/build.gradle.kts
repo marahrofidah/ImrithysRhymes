@@ -67,6 +67,7 @@ dependencies {
     implementation("io.coil-kt:coil-gif:2.5.0")
 //    implementation ("com.google.accompanist:accompanist-glide:0.33.1")
     implementation ("androidx.compose.ui:ui:1.5.4")
+    implementation ("androidx.datastore:datastore-preferences:1.1.1")
 
 
 

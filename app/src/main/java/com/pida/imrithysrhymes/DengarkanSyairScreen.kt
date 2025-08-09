@@ -66,9 +66,9 @@ fun DengarkanSyairScreen(navController: NavHostController) {
 
 
     val daftarBab = listOf(
-        "Pembukaan – المقدمة" to R.raw.jajal1,
-        "Bab Kalam – باب الكلام" to R.raw.jajal2,
-        "Bab I’rob – باب الإعراب" to null,
+        "Pembukaan – المقدمة" to R.raw.pembukaan,
+        "Bab Kalam – باب الكلام" to R.raw.kalam,
+        "Bab I’rob – باب الإعراب" to R.raw.irab,
         "Bab Alamat I’rob – بَابُ عَلَامَاتِ الإِعْرَابِ" to null,
         "Bab Alamat Nashob – بَابُ عَلَامَاتِ النَّصْبِ" to null,
         "Bab Alamat Jer – بَابُ عَلَامَاتِ الخَفْضِ" to null,

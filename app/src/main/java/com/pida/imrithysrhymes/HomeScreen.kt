@@ -67,7 +67,9 @@ import kotlin.system.exitProcess
 data class MenuItem(val title: String, val iconRes: Int, val backgroundColor: Color)
 
 @Composable
-fun HomeScreen(username: String, navController: NavHostController) {
+fun HomeScreen(username: String, navController: NavHostController, quizViewModel: QuizViewModel) {
+    val currentProgress = quizViewModel.currentProgress
+    val maxProgress = quizViewModel.maxProgress
     Scaffold(
         bottomBar = {
             BottomNavigationBar(navController = navController)
@@ -262,7 +264,7 @@ fun HomeScreen(username: String, navController: NavHostController) {
                     Spacer(modifier = Modifier.height(12.dp))
 
                     LinearProgressIndicator(
-                        progress = { 0f / 254f },
+                        progress = { currentProgress.toFloat() / maxProgress },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(20.dp)
@@ -272,7 +274,7 @@ fun HomeScreen(username: String, navController: NavHostController) {
                     )
 
                     Text(
-                        text = "0/254",
+                        text = "$currentProgress/$maxProgress",
                         fontSize = 12.sp,
                         color = Color.DarkGray,
                         modifier = Modifier.align(Alignment.End)
