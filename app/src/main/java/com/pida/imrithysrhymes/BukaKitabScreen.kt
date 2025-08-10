@@ -125,11 +125,11 @@ fun BukaKitabScreen(
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                         )
                         Text(
-                            text = "Pilih bab untuk dibaca dalam bentuk PDF.",
+                            text = "Pilih bab untuk dibaca dan belajar.",
                             style = MaterialTheme.typography.bodySmall,
                             color = Color(0xFF3A327C),
                             fontSize = 20.sp,
-                            lineHeight = 30.sp
+                            lineHeight = 20.sp
                         )
                     }
                 }

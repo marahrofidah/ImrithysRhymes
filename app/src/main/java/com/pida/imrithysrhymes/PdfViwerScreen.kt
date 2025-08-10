@@ -32,11 +32,12 @@ fun PdfViewerScreen(
     navController: NavHostController
 ) {
     val context = LocalContext.current
-    val pdfFileName = when (babName) {
-        "Pembukaan" -> "pembukaan.pdf"
-        "Bab kalam" -> "bab_kalam.pdf"
+    val pdfFileName = when {
+        babName.contains("pembukaan", ignoreCase = true) -> "pembukaan.pdf"
+        babName.contains("bab kalam", ignoreCase = true) -> "bab_kalam.pdf"
         else -> "pembukaan.pdf"
     }
+
 
     var bitmaps by remember { mutableStateOf<List<Bitmap>>(emptyList()) }
 
