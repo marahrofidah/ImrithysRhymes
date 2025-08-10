@@ -63,7 +63,7 @@ fun DengarkanSyairScreen(navController: NavHostController) {
 
 
     val daftarBab = listOf(
-        "Pembukaan – المقدمة" to R.raw.pembukaanbk,
+        "Pembukaan – المقدمة" to R.raw.pembukaanms,
         "Bab Kalam – باب الكلام" to R.raw.kalam,
         "Bab I’rob – باب الإعراب" to R.raw.irab,
         "Bab Alamat I’rob – بَابُ عَلَامَاتِ الإِعْرَابِ" to null,
@@ -162,31 +162,19 @@ fun DengarkanSyairScreen(navController: NavHostController) {
                         color = Color(0xFF3A327C)
                     )}
             }
-
             Box(
                 modifier = Modifier
-                    .width(129.dp)
-                    .height(150.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.rhymes),
-                    contentDescription = "Rhymes Text",
-                    modifier = Modifier
-                        .align(Alignment.TopStart)
-                        .offset(y = 0.dp, x = 0.dp)
-                        .size(width = 129.dp, height = 150.dp)
-                )
+                .width(180.dp)
+                .height(150.dp)){
+            Image(
+                painter = painterResource(id = R.drawable.ic_lengkap),
+                contentDescription = "Rhymes Text",
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .fillMaxWidth()
+            )
 
-                Image(
-                    painter = painterResource(id = R.drawable.imrithys),
-                    contentDescription = "Imrithys Text",
-                    modifier = Modifier
-                        .align(Alignment.TopStart)
-                        .offset(y = (-30).dp, x = (-20).dp)
-                        .size(width = 129.dp, height = 150.dp)
-                )
-            }
-        }
+        }}
 
         // 🔹 TOMBOL PUTAR SEMUA & ACAK
         Row(
@@ -197,7 +185,7 @@ fun DengarkanSyairScreen(navController: NavHostController) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             RoundedImageButton(
-                text = "Putar Semua",
+                text = "Putar Semua" ,
                 imageRes = if (isPlayingAll.value && !isShuffle.value) R.drawable.play else R.drawable.putarsemua,
                 onClick = {
                     if (isPlayingAll.value && !isShuffle.value) {
@@ -332,7 +320,7 @@ fun RoundedImageButton(
             .drawBehind {
                 val shadowColorLight = Color.White.copy(alpha = 0.3f)
                 val shadowColorDark = Color.Black.copy(alpha = 0.3f)
-                val cornerRadius = 20.dp.toPx()
+                val cornerRadius = 25.dp.toPx()
                 val blurRadius = 10.dp.toPx()
 
                 // Shadow terang (atas kiri)
@@ -369,7 +357,7 @@ fun RoundedImageButton(
             text,
             fontFamily = WinkySansFont,
             fontWeight = FontWeight.Bold,
-            fontSize = 21.sp,
+            fontSize = 18.sp,
             color = Color(0xFF3A327C)
         )
     }}
