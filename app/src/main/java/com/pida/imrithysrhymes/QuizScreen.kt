@@ -81,7 +81,8 @@ fun QuizScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp)
-                    .verticalScroll(rememberScrollState()),
+                    .verticalScroll(rememberScrollState())
+                    .offset(y = 10.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 // Header
@@ -205,13 +206,13 @@ fun QuizScreen(
 
                                         drawRoundRect(
                                             color = shadowColorLight,
-                                            topLeft = Offset(-10f, -10f),
+                                            topLeft = Offset(-7f, -7f),
                                             size = size,
                                             cornerRadius = CornerRadius(cornerRadius, cornerRadius)
                                         )
                                         drawRoundRect(
                                             color = shadowColorDark,
-                                            topLeft = Offset(6f, 6f),
+                                            topLeft = Offset(6f, 12f),
                                             size = size,
                                             cornerRadius = CornerRadius(cornerRadius, cornerRadius)
                                         )
@@ -459,7 +460,7 @@ fun QuizScreen(
                     contentDescription = "Rhymes Text",
                     modifier = Modifier
                         .align(Alignment.TopStart)
-                        .offset(y = -40.dp)
+                        .offset(y = -30.dp)
                         .size(129.dp, 150.dp)
                 )
                 Image(
@@ -467,7 +468,7 @@ fun QuizScreen(
                     contentDescription = "Imrithys Text",
                     modifier = Modifier
                         .align(Alignment.TopStart)
-                        .offset(y = -70.dp, x = -20.dp)
+                        .offset(y = -60.dp, x = -10.dp)
                         .size(129.dp, 150.dp)
                 )
                 Image(
@@ -475,7 +476,7 @@ fun QuizScreen(
                     contentDescription = null,
                     modifier = Modifier
                         .align(Alignment.TopStart)
-                        .offset(x = -95.dp, y = -20.dp)
+                        .offset(x = -85.dp, y = -10.dp)
                         .size(70.dp)
                 )
             }

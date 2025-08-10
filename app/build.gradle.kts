@@ -1,3 +1,5 @@
+// build.gradle.kts (Module: app)
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -43,16 +45,26 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
+    implementation(platform(libs.androidx.compose.bom)) // Ini sudah mengelola versi Compose
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+
+    // Dependency lainnya yang tidak terkait Compose BOM
     implementation(libs.androidx.navigation.runtime.android)
+    implementation("androidx.compose.animation:animation")
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+    implementation("io.coil-kt:coil-compose:2.5.0")
+    implementation("io.coil-kt:coil-gif:2.5.0")
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+    implementation("androidx.compose.material:material-icons-extended:1.6.0")
+    //implementation("com.github.barteksc:android-pdf-viewer:3.2.0-beta.1")
+
+    // Testing Dependencies
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -60,20 +72,8 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation("androidx.compose.animation:animation")
-    implementation ("androidx.compose.material:material-icons-extended:1.6.0")
-    implementation("androidx.navigation:navigation-compose:2.7.7")
-    implementation("io.coil-kt:coil-compose:2.5.0")
-    implementation("io.coil-kt:coil-gif:2.5.0")
-//    implementation ("com.google.accompanist:accompanist-glide:0.33.1")
-    implementation ("androidx.compose.ui:ui:1.5.4")
-    implementation ("androidx.datastore:datastore-preferences:1.1.1")
 
-
-
-
-
-
-
-
+    // Hapus baris-baris ini karena sudah dicover oleh Compose BOM atau sudah ada versi lain:
+    // implementation ("androidx.compose.material:material-icons-extended:1.6.0")
+    // implementation ("androidx.compose.ui:ui:1.5.4")
 }

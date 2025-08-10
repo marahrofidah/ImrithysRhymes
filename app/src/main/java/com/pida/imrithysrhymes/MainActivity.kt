@@ -1,5 +1,7 @@
 package com.pida.imrithysrhymes
 
+import PdfViewerScreen
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -21,6 +23,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 
 
 class MainActivity : ComponentActivity() {
@@ -66,8 +70,22 @@ fun MainNavigation(
             DengarkanSyairScreen(navController = navController)
         }
         composable("kitab") {
-            BukaKitabScreen(navController = navController)
+            BukaKitabScreen(
+                navController = navController,
+                onBabClick = { babName ->
+                    navController.navigate("pdf_viewer/${Uri.encode(babName)}")
+                }
+            )
         }
+
+        composable(
+            route = "pdf_viewer/{bab}",
+            arguments = listOf(navArgument("bab") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val babName = backStackEntry.arguments?.getString("bab") ?: ""
+            PdfViewerScreen(babName, navController)
+        }
+
         composable("user") {
             UserScreen(navController = navController)
         }

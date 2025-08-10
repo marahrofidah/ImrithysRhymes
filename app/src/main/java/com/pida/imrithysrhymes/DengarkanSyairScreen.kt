@@ -27,14 +27,12 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberBottomAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 
 import androidx.compose.ui.res.painterResource
@@ -44,7 +42,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import android.media.MediaPlayer
-import androidx.compose.runtime.remember
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -66,7 +63,7 @@ fun DengarkanSyairScreen(navController: NavHostController) {
 
 
     val daftarBab = listOf(
-        "Pembukaan – المقدمة" to R.raw.pembukaan,
+        "Pembukaan – المقدمة" to R.raw.pembukaanbk,
         "Bab Kalam – باب الكلام" to R.raw.kalam,
         "Bab I’rob – باب الإعراب" to R.raw.irab,
         "Bab Alamat I’rob – بَابُ عَلَامَاتِ الإِعْرَابِ" to null,
