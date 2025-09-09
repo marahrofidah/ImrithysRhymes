@@ -77,7 +77,6 @@ fun BukaKitabScreen(
                             .size(129.dp, 150.dp)
                             .zIndex(1f)
                     )
-//                    ekhem
                     Image(
                         painter = painterResource(R.drawable.imrithys),
                         contentDescription = "Imrithys Text",
