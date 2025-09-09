@@ -41,7 +41,7 @@ import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import com.pida.imrithysrhymes.ui.theme.WinkySansFont
 
-// BukaKitabScreen.kt
+// BukaKitabScreen.kt ini
 @Composable
 fun BukaKitabScreen(
     navController: NavHostController,
