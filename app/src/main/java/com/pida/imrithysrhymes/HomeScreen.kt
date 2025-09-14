@@ -435,7 +435,7 @@ fun BottomNavigationBar(navController: NavHostController) {
                             if (selected) {
                                 Box(
                                     modifier = Modifier
-                                        .size(52.dp) // Ukuran lingkaran background
+                                        .size(52.dp) // Ukuran lingkaran background ini
                                         .background(
                                             Color.White.copy(alpha = 0.3f),
                                             shape = CircleShape
