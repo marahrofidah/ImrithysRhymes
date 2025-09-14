@@ -435,7 +435,7 @@ fun BottomNavigationBar(navController: NavHostController) {
                             if (selected) {
                                 Box(
                                     modifier = Modifier
-                                        .size(52.dp) // Ukuran lingkaran background ini
+                                        .size(52.dp) // Ukuran lingkaran background ini nahh ini blm bisa yang kibanya pindah tu
                                         .background(
                                             Color.White.copy(alpha = 0.3f),
                                             shape = CircleShape
