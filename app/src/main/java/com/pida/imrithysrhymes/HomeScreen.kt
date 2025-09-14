@@ -105,7 +105,7 @@ fun HomeScreen(username: String, navController: NavHostController, quizViewModel
                             .size(70.dp)
                             .clickable { /* Aksi info */ }
                     ) {
-                        // Latar bulat
+                        // Latar bulat info
                         Image(
                             painter = painterResource(id = R.drawable.lb_info),
                             contentDescription = null,
