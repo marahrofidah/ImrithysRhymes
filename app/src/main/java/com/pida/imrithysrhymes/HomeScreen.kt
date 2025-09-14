@@ -222,7 +222,6 @@ fun HomeScreen(username: String, navController: NavHostController, quizViewModel
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // 🔥 Ikon api + background kuning
                         Box(
                             modifier = Modifier.size(68.dp)
                         ) {
